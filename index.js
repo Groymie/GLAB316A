@@ -58,6 +58,11 @@ for (let i = 0; i < menuLinks.length; i++) {
 }
 
 const subMenuEl = document.getElementById("sub-menu");
+// console.log(`this is subMenuEl ${subMenuEl.id}`);
+// console.log(`this is subMenuEl's type ${typeof subMenuEl}`);
+// for (sub in subMenuEl) {
+//   console.log(`here is a sub ${sub}`)
+// }
 const subMenuHeight = "100%";
 const subMenuBGColor = "var(--sub-menu-bg)";
 const subMenuPosition = "absolute";
@@ -68,15 +73,43 @@ subMenuEl.classList.add("flex-around");
 subMenuEl.style.position = subMenuPosition;
 subMenuEl.style.top = "0";
 
+const buildSubmenu = (arrayOfLinks) => {
+  for (let i = 0; i < subMenuEl.children.length; i++) {
+    subMenuEl.removeChild(subMenuEl.children[i]);
+  }
+
+  for (const link of arrayOfLinks) {
+    const linkToAppend = document.createElement("a");
+    linkToAppend.setAttribute("href", link.href);
+    linkToAppend.innerText = link.text;
+    subMenuEl.appendChild(linkToAppend);
+  }
+};
+
 const topMenuLinks = topMenuEl.querySelectorAll("a");
 topMenuEl.addEventListener("click", (event) => {
   event.preventDefault();
-  console.log(event);
+  // console.log(event);
+  const lookupObj = { catalog: 1, orders: 2, account: 3 };
 
   if (event.target.localName === "a") {
     console.log(event.target.innerText);
   } else {
     return;
+  }
+
+  if (event.target.classList.contains("active") == false) {
+    console.log(event.target.classList.contains("active"));
+    let linkName = event.target.innerText.toLowerCase();
+    // console.log(linkName);
+    // console.log(typeof linkName);
+    if (linkName != "about") {
+      // console.log("here is the " + menuLinks.sublinks);
+      buildSubmenu(menuLinks[lookupObj[linkName]].sublinks);
+      subMenuEl.style.top = "100%";
+    }
+  } else {
+    subMenuEl.style.top = "0";
   }
 
   event.target.classList.toggle("active");
@@ -85,15 +118,10 @@ topMenuEl.addEventListener("click", (event) => {
       link.classList.remove("active");
     }
   }
-
-  if (event.target.classList.contains("active") == false) {
-    let linkName = event.target.innerText.toLowerCase();
-    console.log(linkName);
-    console.log(typeof linkName);
-    if (menuLinks.sublinks != undefined) {
-      subMenuEl.style.top = "100%";
-    } else {
-      subMenuEl.style.top = "0";
-    }
-  }
 });
+
+// console.log(`Number of children: ${subMenuEl.children}`)
+
+for (child in subMenuEl.children) {
+  console.log(child.id);
+}
